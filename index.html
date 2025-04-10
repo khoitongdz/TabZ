@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Tab Navigation</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background-color: white;
+            border-top: 1px solid #ccc;
+            padding: 5px 0;
+        }
+
+        .tab-item {
+            text-align: center;
+            flex: 1;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 5px 0;
+            border-radius: 5px;
+            -webkit-tap-highlight-color: transparent;
+            color: gray;
+            transition: color 0.5s ease-in-out;
+        }
+
+        .tab-item.active {
+            color: red;
+        }
+
+        .tab-item img {
+            width: 24px;
+            height: 24px;
+            display: block;
+            margin: 0 auto 2px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: calc(100vh - 60px);
+            border: none;
+            transition: opacity 1s ease-in-out;
+        }
+
+        /* Popup thông báo */
+        body.modal-active::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9;
+        }
+
+        #alertBox {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            display: none;
+            width: 300px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        #alertBox p {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .alert-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .alert-buttons button {
+            border: none;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+            background-color: #FFC0CB;
+            color: white;
+        }
+
+        .alert-buttons button:hover {
+            background-color: #ff9aad;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -55%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Iframe hiển thị nội dung -->
+    <iframe id="iframe-content" class="iframe-container" src="https://meolazy.github.io/Main"></iframe>
+
+    <!-- Thanh điều hướng -->
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="openTab('https://meolazy.github.io/Main', this)" data-tab="thietbi">
+            <img src="https://i.imgur.com/YcNNVKr.png" alt="Thiết Bị">
+            <span>Thiết Bị</span>
+        </div>
+ 
+        <div class="tab-item" onclick="openTab('https://meolazy.github.io/Pro/', this)" data-tab="game">
+            <img src="https://i.imgur.com/rvmhLgP.png" alt="Game">
+            <span>Thiết Bị Pro</span>
+        </div>
+        <div class="tab-item" onclick="openTab('https://khoitongdz.github.io/skid/', this)" data-tab="quanly">
+            <img src="https://i.imgur.com/mdFmmVr.png" alt="Khám Phá">
+            <span>Khám Phá</span>
+        </div>
+        <div class="tab-item" onclick="openTab('https://meolazy.github.io/Home/', this)" data-tab="home">
+            <img src="https://i.imgur.com/gPPZf93.png" alt="Home">
+            <span>Home</span>
+        </div>
+    </div>
+
+    <!-- Popup thông báo -->
+    <div id="alertBox">
+        <p>Theo Dõi Cập Nhật UgPhone</p>
+        <div class="alert-buttons">
+            <button class="ok-btn" onclick="closeAlert()">Không</button>
+            <button class="discord-btn" onclick="openDiscord()">Discord</button>
+        </div>
+    </div>
+
+    <script>
+        function openTab(url, element) {
+            document.getElementById('iframe-content').style.opacity = '0';
+
+            setTimeout(() => {
+                document.getElementById('iframe-content').src = url;
+                document.getElementById('iframe-content').style.opacity = '1';
+            }, 300);
+
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                tab.classList.remove('active');
+                tab.querySelector("span").style.color = "gray";
+
+                if (tab.dataset.tab === "thietbi") {
+                    tab.querySelector("img").src = "https://i.imgur.com/YcNNVKr.png";
+                }
+                if (tab.dataset.tab === "quanly") {
+                    tab.querySelector("img").src = "https://i.imgur.com/mdFmmVr.png";
+                }
+                if (tab.dataset.tab === "game") {
+                    tab.querySelector("img").src = "https://i.imgur.com/rvmhLgP.png";
+                }
+                if (tab.dataset.tab === "home") {
+                    tab.querySelector("img").src = "https://i.imgur.com/gPPZf93.png";
+                }
+            });
+
+            element.classList.add('active');
+            element.querySelector("span").style.color = "red";
+
+            if (element.dataset.tab === "thietbi") {
+                element.querySelector("img").src = "https://i.imgur.com/8AMk0TU.png";
+            }
+            if (element.dataset.tab === "quanly") {
+                element.querySelector("img").src = "https://i.imgur.com/sPbMuuY.png";
+            }
+            if (element.dataset.tab === "game") {
+                element.querySelector("img").src = "https://i.imgur.com/MD59IfV.png";
+            }
+            if (element.dataset.tab === "home") {
+                element.querySelector("img").src = "https://i.imgur.com/WhQ50sV.png";
+            }
+        }
+
+        const ALERT_DELAY = 10 * 60 * 60 * 1000; // 10 giờ
+
+        function showAlert() {
+            document.getElementById('alertBox').style.display = 'block';
+            document.body.classList.add('modal-active');
+        }
+
+        function closeAlert() {
+            setNextAlertTime(ALERT_DELAY);
+            hideAlertBox();
+        }
+
+        function openDiscord() {
+            setNextAlertTime(ALERT_DELAY);
+            window.open('https://discord.gg/w26VGWmMPb', '_blank');
+            hideAlertBox();
+        }
+
+        function setNextAlertTime(delay) {
+            const futureTime = Date.now() + delay;
+            localStorage.setItem('nextAlertTime', futureTime);
+        }
+
+        function hideAlertBox() {
+            document.getElementById('alertBox').style.display = 'none';
+            document.body.classList.remove('modal-active');
+        }
+
+        function checkAndShowAlert() {
+            const nextAlertTime = localStorage.getItem('nextAlertTime');
+            if (!nextAlertTime || Date.now() > parseInt(nextAlertTime)) {
+                showAlert();
+            }
+        }
+
+        window.onload = checkAndShowAlert;
+    </script>
+
+</body>
+</html>
